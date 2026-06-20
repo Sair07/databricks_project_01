@@ -1,154 +1,104 @@
-🚀 Databricks Lakehouse Project
+# 🚀 Databricks Lakehouse Project (Medallion Architecture)
 
-A modern data engineering project built on the Databricks Lakehouse Platform, implementing the Medallion Architecture (Bronze → Silver → Gold) and orchestrated using Databricks Workflows.
+This project demonstrates a **Databricks-based data pipeline** using the **Medallion Architecture (Bronze → Silver → Gold)** with **notebook orchestration**.
 
-This project demonstrates how to build scalable, maintainable, and production-ready data pipelines using Databricks notebooks, Delta Lake, and Spark-based transformations.
+---
 
-🏗️ Solution Architecture
-                ┌─────────────────┐
-                │   Source Data   │
-                └────────┬────────┘
-                         │
-                         ▼
-                🥉 BRONZE LAYER
-              Raw Data Ingestion
-                         │
-                         ▼
-                🥈 SILVER LAYER
-          Data Cleansing & Validation
-                         │
-                         ▼
-                 🥇 GOLD LAYER
-          Business & Analytics Tables
-                         │
-                         ▼
-                📊 Reporting / BI
-🏅 Medallion Architecture
-🥉 Bronze Layer – Raw Data
+## 📌 Overview
 
-The Bronze layer serves as the landing zone for all incoming source data.
+- Built on Databricks Lakehouse
+- Uses multiple notebooks for ETL pipeline
+- Orchestrated using a master notebook
+- Follows industry-standard Medallion Architecture
 
-Responsibilities
-Raw data ingestion
-Schema preservation
-Historical retention
-Minimal transformations
-Benefits
-Data traceability
-Reprocessing capability
-Source system auditing
-🥈 Silver Layer – Cleansed Data
+---
 
-The Silver layer contains validated and transformed datasets.
+## 🏗️ Architecture
 
-Responsibilities
-Data quality checks
-Deduplication
-Standardization
-Null handling
-Business rule validation
-Benefits
-Improved data quality
-Reusable datasets
-Consistent schema management
-🥇 Gold Layer – Business Data
+```
+Source Data
+    ↓
+Bronze Layer (Raw Data)
+    ↓
+Silver Layer (Cleaned Data)
+    ↓
+Gold Layer (Business Data)
+    ↓
+Reporting / Analytics
+```
 
-The Gold layer contains business-ready datasets optimized for analytics and reporting.
+---
 
-Responsibilities
-Aggregations
-KPI calculations
-Business metrics
-Reporting tables
-Benefits
-Faster dashboard performance
-Self-service analytics
-Executive reporting
-⚙️ Pipeline Orchestration
+## 🥉 Bronze Layer
 
-This project uses a Master Notebook Pattern for orchestration.
+- Raw data ingestion
+- Stores source data as-is
+- Supports reprocessing
 
+**Examples:**
+- CSV / JSON ingestion
+- API data load
+
+---
+
+## 🥈 Silver Layer
+
+- Data cleaning and transformation
+- Handles:
+  - Null values
+  - Duplicates
+  - Data type corrections
+
+**Purpose:**
+- Improve data quality
+- Prepare for analytics
+
+---
+
+## 🥇 Gold Layer
+
+- Business-level data
+- Aggregations and KPIs
+- Used for reporting and dashboards
+
+---
+
+## ⚙️ Pipeline Orchestration
+
+A **master notebook** triggers all other notebooks sequentially.
+
+### Example:
+
+```python
 notebooks = [
-    "/bronze_ingestion",
-    "/silver_transformation",
-    "/silver_validation",
-    "/gold_aggregation",
-    "/gold_reporting",
-    "/publish"
+    "/Workspace/ETL/step1_ingestion",
+    "/Workspace/ETL/step2_cleaning",
+    "/Workspace/ETL/step3_transform",
+    "/Workspace/ETL/step4_validation",
+    "/Workspace/ETL/step5_aggregation",
+    "/Workspace/ETL/step6_publish"
 ]
 
 for nb in notebooks:
-    result = dbutils.notebook.run(
-        nb,
-        timeout_seconds=0,
-        arguments={"run_id": "123"}
-    )
+    result = dbutils.notebook.run(nb, 0, {"run_id": "123"})
+    print(f"{nb} finished with result: {result}")
+```
 
-    print(f"{nb} completed: {result}")
-Execution Flow
-Master Notebook
-       │
-       ▼
- Notebook 1
-       │
-       ▼
- Notebook 2
-       │
-       ▼
- Notebook 3
-       │
-       ▼
- Notebook 4
-       │
-       ▼
- Notebook 5
-       │
-       ▼
- Notebook 6
+---
 
-Each notebook:
+## 🔄 Execution Flow
 
-✅ Executes independently
+1. Master notebook starts
+2. Executes notebooks one by one
+3. Waits for each to complete
+4. Captures result
+5. Moves to next step
 
-✅ Returns status to the parent notebook
+---
 
-✅ Supports parameter passing
+## 📂 Project Structure
 
-✅ Can be reused across multiple pipelines
-
-🔄 Workflow Lifecycle
-Source Systems
-      │
-      ▼
- Data Ingestion
-      │
-      ▼
- Bronze Tables
-      │
-      ▼
- Silver Transformations
-      │
-      ▼
- Data Quality Checks
-      │
-      ▼
- Gold Aggregations
-      │
-      ▼
- Reporting Layer
-      │
-      ▼
- Business Consumption
-🛠️ Technology Stack
-Component	Technology
-Compute	Apache Spark
-Platform	Databricks
-Storage	Delta Lake
-Language	Python
-SQL Engine	Spark SQL
-Orchestration	Databricks Workflows
-Architecture	Medallion Lakehouse
-📂 Project Structure
+```
 lakehouse_01/
 │
 ├── notebooks/
@@ -158,74 +108,71 @@ lakehouse_01/
 │   └── orchestration/
 │
 ├── data/
-│
 ├── configs/
-│
 └── README.md
-✨ Key Features
-📥 Incremental Data Loading
+```
 
-Supports scalable ingestion patterns.
+---
 
-🔍 Data Quality Validation
+## 🛠️ Tech Stack
 
-Validation rules applied during Silver transformations.
+- Databricks
+- Apache Spark
+- Delta Lake
+- Python
+- Spark SQL
 
-⚡ Delta Lake Support
+---
 
-Provides:
+## ✅ Key Features
 
-ACID Transactions
-Time Travel
-Schema Evolution
-Efficient Upserts
-🔄 Notebook Orchestration
+- Modular notebook design
+- Scalable ETL pipeline
+- Parameterized execution
+- Delta Lake support (ACID, Time Travel)
+- Easy orchestration using master notebook
 
-Sequential execution using Databricks notebook workflows.
+---
 
-📊 Analytics Ready
+## 🚦 How to Run
 
-Gold layer optimized for dashboards and reporting.
+1. Open Databricks workspace
+2. Navigate to master notebook
+3. Run the notebook
+4. Monitor execution in Jobs UI
 
-🚦 Running the Pipeline
-Step 1
+---
 
-Open the orchestration notebook.
+## ⚠️ Error Handling (Recommended)
 
-Step 2
+```python
+for nb in notebooks:
+    try:
+        result = dbutils.notebook.run(nb, 0, {"run_id": "123"})
+        print(f"{nb} success: {result}")
+    except Exception as e:
+        print(f"{nb} failed: {str(e)}")
+        break
+```
 
-Execute the master notebook.
+---
 
-Step 3
+## 📈 Future Improvements
 
-Monitor execution in:
+- Parallel execution
+- Alerts & monitoring
+- CI/CD integration
+- Data quality framework
+- Streaming pipeline support
 
-Databricks → Workflows → Jobs
+---
 
-Step 4
-
-Verify generated Bronze, Silver, and Gold tables.
-
-📈 Future Improvements
-🚀 Parallel notebook execution
-🔔 Email and Teams notifications
-📋 Data quality dashboards
-🧪 Unit testing framework
-🔄 CI/CD deployment pipelines
-📡 Streaming ingestion support
-🎯 Learning Outcomes
-
-This project demonstrates:
-
-Databricks Notebook Orchestration
-Delta Lake Implementation
-Medallion Architecture
-ETL/ELT Design Patterns
-Data Engineering Best Practices
-Workflow Automation
-Lakehouse Architecture Principles
-👨‍💻 Author
+## 👨‍💻 Author
 
 Sai Ram
 
-📌 Databricks • Spark • Delta Lake • Data Engineering • Lakehouse Architecture
+---
+
+## ⭐ If you like this project
+
+Give it a star ⭐ on GitHub
